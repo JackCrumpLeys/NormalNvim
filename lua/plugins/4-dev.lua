@@ -40,6 +40,9 @@
 --       ## LANGUAGE IMPROVEMENTS
 --       -> guttentags_plus                [auto generate C/C++ tags]
 
+--       ## (LA)TEX
+--       -> vimtex                         [awesome tex support]
+
 local is_windows = vim.fn.has('win32') == 1 -- true if on windows
 
 return {
@@ -858,5 +861,12 @@ return {
       })
     end,
   },
+
+  {
+    "lervag/vimtex",
+    init = function()
+      -- Use init for configuration, don't use the more common "config".
+    end
+  }
 
 }  -- end of return
