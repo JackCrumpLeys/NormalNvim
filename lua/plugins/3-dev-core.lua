@@ -215,6 +215,8 @@ return {
   --  This plugin provide default configs for the lsp servers available on mason.
   {
     "neovim/nvim-lspconfig",
+    dependencies = {
+    },
     event = "User BaseFile",
     dependencies = "nvim-java/nvim-java",
   },
@@ -225,7 +227,16 @@ return {
   -- every time Neovim trigger the event FileType.
   {
     "williamboman/mason-lspconfig.nvim",
-    dependencies = { "neovim/nvim-lspconfig" },
+    dependencies = { "neovim/nvim-lspconfig",
+      {
+        "folke/neoconf.nvim",
+        cmd = "Neoconf",
+        config = function(_, opts)
+          require("neoconf").setup(opts)
+        end,
+        dependencies = { "nvim-lspconfig" }
+      },
+    },
     event = "User BaseFile",
     opts = function(_, opts)
       if not opts.handlers then opts.handlers = {} end
@@ -500,6 +511,7 @@ return {
         sources = cmp.config.sources {
           { name = "nvim_lsp", priority = 1000 },
           { name = "luasnip",  priority = 750 },
+          { name = "crates",   priority = 501 },
           { name = "buffer",   priority = 500 },
           { name = "path",     priority = 250 },
         },

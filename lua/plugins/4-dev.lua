@@ -41,9 +41,30 @@
 --       ## (LA)TEX
 --       -> vimtex                         [awesome tex support]
 
+--       ## Rust
+--       -> crates                         [support cargo.toml]
 local is_windows = vim.fn.has('win32') == 1 -- true if on windows
 
 return {
+  --  COMMENTS ----------------------------------------------------------------
+  --  Advanced comment features [comment with a key]
+  --  https://github.com/numToStr/Comment.nvim
+  {
+    "numToStr/Comment.nvim",
+    keys = {
+      { "gc", mode = { "n", "v" }, desc = "Comment toggle linewise" },
+      { "gb", mode = { "n", "v" }, desc = "Comment toggle blockwise" },
+    },
+    opts = function()
+      local commentstring_avail, commentstring =
+          pcall(require, "ts_context_commentstring.integrations.comment_nvim")
+      return commentstring_avail
+          and commentstring
+          and { pre_hook = commentstring.create_pre_hook() }
+          or {}
+    end,
+  },
+
   --  SNIPPETS ----------------------------------------------------------------
   --  Vim Snippets engine  [snippet engine] + [snippet templates]
   --  https://github.com/L3MON4D3/LuaSnip
@@ -154,16 +175,17 @@ return {
     "stevearc/aerial.nvim",
     event = "User BaseFile",
     opts = {
-      filter_kind = { -- Symbols that will appear on the tree
-        -- "Class",
-        "Constructor",
-        "Enum",
-        "Function",
-        "Interface",
-        -- "Module",
-        "Method",
-        -- "Struct",
-      },
+      -- filter_kind = { -- Symbols that will appear on the tree
+      --   -- "Class",
+      --   "Constructor",
+      --   "Enum",
+      --   "Function",
+      --   "Interface",
+      --   -- "Module",
+      --   "Method",
+      --   -- "Struct",
+      -- },
+      filter_kind = false,
       open_automatic = false, -- Open if the buffer is compatible
       autojump = true,
       link_folds_to_tree = false,
@@ -333,17 +355,17 @@ return {
   --  https://github.com/github/copilot.vim
   --  As alternative to chatgpt, you can use copilot uncommenting this.
   --  Then you must run :Copilot setup
-  -- {
-  --   "github/copilot.vim",
-  --   event = "User BaseFile"
-  -- },
+  {
+    "github/copilot.vim",
+    event = "User BaseFile"
+  },
   -- copilot-cmp
   -- https://github.com/zbirenbaum/copilot-cmp
-  -- {
-  --   "zbirenbaum/copilot-cmp",
-  --   opts = { suggesion = { enabled = false }, panel = { enabled = false } },
-  --   config = function (_, opts) require("copilot_cmp").setup(opts) end
-  -- },
+  {
+    "zbirenbaum/copilot-cmp",
+    opts = { suggesion = { enabled = false }, panel = { enabled = false } },
+    config = function (_, opts) require("copilot_cmp").setup(opts) end
+  },
 
   -- [guess-indent]
   -- https://github.com/NMAC427/guess-indent.nvim
@@ -907,11 +929,236 @@ return {
       })
     end,
   },
-
   {
   }
     end
       -- Use init for configuration, don't use the more common "config".
     init = function()
     "lervag/vimtex",
+    lazy = false,
+    init = function()
+      -- add which-key mapping descriptions for VimTex
+      vim.api.nvim_create_autocmd("FileType", {
+        desc = "Set up VimTex Which-Key descriptions",
+        group = vim.api.nvim_create_augroup("vimtex_mapping_descriptions", { clear = true }),
+        pattern = "tex",
+        callback = function(event)
+          local wk = require "which-key"
+          local opts = {
+            mode = "n",         -- NORMAL mode
+            buffer = event.buf, -- Specify a buffer number for buffer local mappings to show only in tex buffers
+          }
+          local mappings = {
+            ["<localleader>l"] = {
+              name = "+VimTeX",
+              a = "Show Context Menu",
+              C = "Full Clean",
+              c = "Clean",
+              e = "Show Errors",
+              G = "Show Status for All",
+              g = "Show Status",
+              i = "Show Info",
+              I = "Show Full Info",
+              k = "Stop VimTeX",
+              K = "Stop All VimTeX",
+              L = "Compile Selection",
+              l = "Compile",
+              m = "Show Imaps",
+              o = "Show Compiler Output",
+              q = "Show VimTeX Log",
+              s = "Toggle Main",
+              t = "Open Table of Contents",
+              T = "Toggle Table of Contents",
+              v = "View Compiled Document",
+              X = "Reload VimTeX State",
+              x = "Reload VimTeX",
+            },
+            ["ts"] = {
+              name = "VimTeX Toggles & Cycles", -- optional group name
+              ["$"] = "Cycle inline, display & numbered equation",
+              c = "Toggle star of command",
+              d = "Cycle (), \\left(\\right) [,...]",
+              D = "Reverse Cycle (), \\left(\\right) [, ...]",
+              e = "Toggle star of environment",
+              f = "Toggle a/b vs \\frac{a}{b}",
+            },
+            ["[/"] = "Previous start of a LaTeX comment",
+            ["[*"] = "Previous end of a LaTeX comment",
+            ["[["] = "Previous beginning of a section",
+            ["[]"] = "Previous end of a section",
+            ["[m"] = "Previous \\begin",
+            ["[M"] = "Previous \\end",
+            ["[n"] = "Previous start of a math zone",
+            ["[N"] = "Previous end of a math zone",
+            ["[r"] = "Previous \\begin{frame}",
+            ["[R"] = "Previous \\end{frame}",
+            ["]/"] = "Next start of a LaTeX comment %",
+            ["]*"] = "Next end of a LaTeX comment %",
+            ["]["] = "Next beginning of a section",
+            ["]]"] = "Next end of a section",
+            ["]m"] = "Next \\begin",
+            ["]M"] = "Next \\end",
+            ["]n"] = "Next start of a math zone",
+            ["]N"] = "Next end of a math zone",
+            ["]r"] = "Next \\begin{frame}",
+            ["]R"] = "Next \\end{frame}",
+            ["cs"] = {
+              c = "Change surrounding command",
+              e = "Change surrounding environment",
+              ["$"] = "Change surrounding math zone",
+              d = "Change surrounding delimiter",
+            },
+            ["ds"] = {
+              c = "Delete surrounding command",
+              e = "Delete surrounding environment",
+              ["$"] = "Delete surrounding math zone",
+              d = "Delete surrounding delimiter",
+            },
+          }
+          wk.register(mappings, opts)
+          -- VimTeX Text Objects without variants with targets.vim
+          opts = {
+            mode = "o", -- Operator pending mode
+            buffer = event.buf,
+          }
+          local objects = {
+            ["ic"] = [[LaTeX Command]],
+            ["ac"] = [[LaTeX Command]],
+            ["id"] = [[LaTeX Math Delimiter]],
+            ["ad"] = [[LaTeX Math Delimiter]],
+            ["ie"] = [[LaTeX Environment]],
+            ["ae"] = [[LaTeX Environment]],
+            ["i$"] = [[LaTeX Math Zone]],
+            ["a$"] = [[LaTeX Math Zone]],
+            ["iP"] = [[LaTeX Section, Paragraph, ...]],
+            ["aP"] = [[LaTeX Section, Paragraph, ...]],
+            ["im"] = [[LaTeX Item]],
+            ["am"] = [[LaTeX Item]],
+          }
+          wk.register(objects, opts)
+        end,
+      })
+    end,
+  },
+  -- RUST:
+  -- Add Rust & related to treesitter
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = function(_, opts)
+      opts.ensure_installed = opts.ensure_installed or {}
+      vim.list_extend(opts.ensure_installed, { "ron", "rust", "toml" })
+    end,
+  },
+
+  -- Ensure Rust debugger is installed
+  {
+    "williamboman/mason.nvim",
+    optional = true,
+    opts = function(_, opts)
+      opts.ensure_installed = opts.ensure_installed or {}
+      vim.list_extend(opts.ensure_installed, { "codelldb" })
+    end,
+  },
+
+  {
+    "mrcjkb/rustaceanvim",
+    version = '^4', -- Recommended
+    ft = { "rust" },
+    opts = {
+      server = {
+        on_attach = function(client, bufnr)
+          local nmap = function(keys, func, desc)
+            if desc then
+              desc = 'LSP: ' .. desc
+            end
+
+            vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+          end
+
+          nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+          nmap('<leader>ca', function()
+            vim.lsp.buf.code_action { context = { only = { 'quickfix', 'refactor', 'source' } } }
+          end, '[C]ode [A]ction')
+
+          nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+          nmap('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+          nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+          nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+
+          -- See `:help K` for why this keymap
+          nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
+          nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+
+          -- Lesser used LSP functionality
+          nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+          nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
+          nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
+          nmap('<leader>wl', function()
+            print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+          end, '[W]orkspace [L]ist Folders')
+
+          -- Create a command `:Format` local to the LSP buffer
+          vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
+            vim.lsp.buf.format()
+          end, { desc = 'Format current buffer with LSP' })
+        end,
+        default_settings = {
+          -- rust-analyzer language server configuration
+          ["rust-analyzer"] = {
+            cargo = {
+              allFeatures = true,
+              loadOutDirsFromCheck = true,
+              runBuildScripts = true,
+            },
+            -- Add clippy lints for Rust.
+            checkOnSave = {
+              allFeatures = true,
+              command = "clippy",
+              extraArgs = { "--no-deps" },
+            },
+            procMacro = {
+              enable = true,
+              ignored = {
+                ["async-trait"] = { "async_trait" },
+                ["napi-derive"] = { "napi" },
+                ["async-recursion"] = { "async_recursion" },
+              },
+            },
+          },
+        },
+      }
+    },
+    config = function(_, opts)
+      vim.g.rustaceanvim = vim.tbl_deep_extend("force",
+        {},
+        opts or {})
+    end
+  },
+
+
+  {
+    "nvim-neotest/neotest",
+    optional = true,
+    opts = function(_, opts)
+      opts.adapters = opts.adapters or {}
+      vim.list_extend(opts.adapters, {
+        require('rustaceanvim.neotest'),
+      })
+    end
+  },
+  {
+    'saecki/crates.nvim',
+    tag = 'stable',
+    event = { "BufRead Cargo.toml" },
+    config = function()
+      require('crates').setup {
+        null_ls = {
+          enabled = true,
+          name = "crates.nvim",
+        },
+      }
+    end,
+  },
 } -- end of return

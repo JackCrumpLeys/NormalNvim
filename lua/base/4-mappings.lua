@@ -1245,6 +1245,11 @@ maps.n["<leader>Te"] = {
   desc = "E2e",
 }
 
+vim.keymap.set('i', '<Right>', 'copilot#Accept("\\<CR>")', {
+          expr = true,
+          replace_keycodes = false
+        })
+vim.g.copilot_no_tab_map = true
 -- nvim-ufo [code folding] --------------------------------------------------
 if is_available "nvim-ufo" then
   maps.n["zR"] =
