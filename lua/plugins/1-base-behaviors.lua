@@ -614,7 +614,7 @@ return {
         cmp.event:on(
           "confirm_done",
           require("nvim-autopairs.completion.cmp").on_confirm_done {
-            tex = false }
+            tex = true }
         )
       end
     end

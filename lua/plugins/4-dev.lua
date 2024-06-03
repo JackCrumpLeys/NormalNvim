@@ -43,6 +43,8 @@
 --       ## (LA)TEX
 --       -> vimtex                         [awesome tex support]
 
+--       ## Rust
+--       -> crates                         [support cargo.toml]
 local is_windows = vim.fn.has('win32') == 1 -- true if on windows
 
 return {
@@ -57,11 +59,11 @@ return {
     },
     opts = function()
       local commentstring_avail, commentstring =
-        pcall(require, "ts_context_commentstring.integrations.comment_nvim")
+          pcall(require, "ts_context_commentstring.integrations.comment_nvim")
       return commentstring_avail
           and commentstring
           and { pre_hook = commentstring.create_pre_hook() }
-        or {}
+          or {}
     end,
   },
 
@@ -180,16 +182,17 @@ return {
       "AerialClose",
     },
     opts = {
-      filter_kind = { -- Symbols that will appear on the tree
-        -- "Class",
-        "Constructor",
-        "Enum",
-        "Function",
-        "Interface",
-        -- "Module",
-        "Method",
-        -- "Struct",
-      },
+      -- filter_kind = { -- Symbols that will appear on the tree
+      --   -- "Class",
+      --   "Constructor",
+      --   "Enum",
+      --   "Function",
+      --   "Interface",
+      --   -- "Module",
+      --   "Method",
+      --   -- "Struct",
+      -- },
+      filter_kind = false,
       open_automatic = false, -- Open if the buffer is compatible
       autojump = true,
       link_folds_to_tree = false,
@@ -298,17 +301,17 @@ return {
   --  https://github.com/github/copilot.vim
   --  As alternative to chatgpt, you can use copilot uncommenting this.
   --  Then you must run :Copilot setup
-  -- {
-  --   "github/copilot.vim",
-  --   event = "User BaseFile"
-  -- },
+  {
+    "github/copilot.vim",
+    event = "User BaseFile"
+  },
   -- copilot-cmp
   -- https://github.com/zbirenbaum/copilot-cmp
-  -- {
-  --   "zbirenbaum/copilot-cmp",
-  --   opts = { suggesion = { enabled = false }, panel = { enabled = false } },
-  --   config = function (_, opts) require("copilot_cmp").setup(opts) end
-  -- },
+  {
+    "zbirenbaum/copilot-cmp",
+    opts = { suggesion = { enabled = false }, panel = { enabled = false } },
+    config = function (_, opts) require("copilot_cmp").setup(opts) end
+  },
 
   -- [guess-indent]
   -- https://github.com/NMAC427/guess-indent.nvim
@@ -399,8 +402,8 @@ return {
       -- C#
       dap.adapters.coreclr = {
         type = 'executable',
-        command = vim.fn.stdpath('data')..'/mason/bin/netcoredbg',
-        args = {'--interpreter=vscode'}
+        command = vim.fn.stdpath('data') .. '/mason/bin/netcoredbg',
+        args = { '--interpreter=vscode' }
       }
       dap.configurations.cs = {
         {
@@ -408,7 +411,7 @@ return {
           name = "launch - netcoredbg",
           request = "launch",
           program = function() -- Ask the user what executable wants to debug
-              return vim.fn.input('Path to dll: ', vim.fn.getcwd() .. '/bin/Program.exe', 'file')
+            return vim.fn.input('Path to dll: ', vim.fn.getcwd() .. '/bin/Program.exe', 'file')
           end,
         },
       }
@@ -425,9 +428,9 @@ return {
 
       -- Python
       dap.adapters.python = {
-          type = 'executable',
-          command = vim.fn.stdpath('data')..'/mason/packages/debugpy/venv/bin/python',
-          args = { '-m', 'debugpy.adapter' },
+        type = 'executable',
+        command = vim.fn.stdpath('data') .. '/mason/packages/debugpy/venv/bin/python',
+        args = { '-m', 'debugpy.adapter' },
       }
       dap.configurations.python = {
         {
@@ -447,7 +450,7 @@ return {
           type = 'nlua',
           request = 'attach',
           name = "Attach to running Neovim instance",
-          program = function() pcall(require"osv".launch({port = 8086})) end,
+          program = function() pcall(require "osv".launch({ port = 8086 })) end,
         }
       }
 
@@ -456,9 +459,9 @@ return {
         type = 'server',
         port = "${port}",
         executable = {
-          command = vim.fn.stdpath('data')..'/mason/bin/codelldb',
-          args = {"--port", "${port}"},
-           detached = function() if is_windows then return false else return true end end,
+          command = vim.fn.stdpath('data') .. '/mason/bin/codelldb',
+          args = { "--port", "${port}" },
+          detached = function() if is_windows then return false else return true end end,
         }
       }
       dap.configurations.c = {
@@ -520,8 +523,8 @@ return {
         type = 'server',
         port = '${port}',
         executable = {
-          command = vim.fn.stdpath('data')..'/mason/packages/delve/dlv',
-          args = {'dap', '-l', '127.0.0.1:${port}'},
+          command = vim.fn.stdpath('data') .. '/mason/packages/delve/dlv',
+          args = { 'dap', '-l', '127.0.0.1:${port}' },
         }
       }
       dap.configurations.go = {
@@ -543,13 +546,13 @@ return {
       -- Dart / Flutter
       dap.adapters.dart = {
         type = 'executable',
-        command = vim.fn.stdpath('data')..'/mason/bin/dart-debug-adapter',
-        args = {'dart'}
+        command = vim.fn.stdpath('data') .. '/mason/bin/dart-debug-adapter',
+        args = { 'dart' }
       }
       dap.adapters.flutter = {
         type = 'executable',
-        command = vim.fn.stdpath('data')..'/mason/bin/dart-debug-adapter',
-        args = {'flutter'}
+        command = vim.fn.stdpath('data') .. '/mason/bin/dart-debug-adapter',
+        args = { 'flutter' }
       }
       dap.configurations.dart = {
         {
@@ -576,33 +579,33 @@ return {
       -- Kotlin projects have very weak project structure conventions.
       -- You must manually specify what the project root and main class are.
       dap.adapters.kotlin = {
-        type = 'executable';
-        command = vim.fn.stdpath('data')..'/mason/bin/kotlin-debug-adapter',
+        type = 'executable',
+        command = vim.fn.stdpath('data') .. '/mason/bin/kotlin-debug-adapter',
       }
       dap.configurations.kotlin = {
-          {
-              type = 'kotlin';
-              request = 'launch';
-              name = 'Launch kotlin program';
-              projectRoot = "${workspaceFolder}/app"; -- ensure this is correct
-              mainClass = "AppKt";                    -- ensure this is correct
-          };
+        {
+          type = 'kotlin',
+          request = 'launch',
+          name = 'Launch kotlin program',
+          projectRoot = "${workspaceFolder}/app", -- ensure this is correct
+          mainClass = "AppKt",                    -- ensure this is correct
+        },
       }
 
       -- Javascript / Typescript (firefox)
       dap.adapters.firefox = {
         type = 'executable',
-        command = vim.fn.stdpath('data')..'/mason/bin/firefox-debug-adapter',
+        command = vim.fn.stdpath('data') .. '/mason/bin/firefox-debug-adapter',
       }
       dap.configurations.typescript = {
         {
-        name = 'Debug with Firefox',
-        type = 'firefox',
-        request = 'launch',
-        reAttach = true,
-        url = 'http://localhost:4200', -- Write the actual URL of your project.
-        webRoot = '${workspaceFolder}',
-        firefoxExecutable = '/usr/bin/firefox'
+          name = 'Debug with Firefox',
+          type = 'firefox',
+          request = 'launch',
+          reAttach = true,
+          url = 'http://localhost:4200', -- Write the actual URL of your project.
+          webRoot = '${workspaceFolder}',
+          firefoxExecutable = '/usr/bin/firefox'
         }
       }
       dap.configurations.javascript = dap.configurations.typescript
@@ -652,36 +655,36 @@ return {
 
       -- Shell
       dap.adapters.bashdb = {
-        type = 'executable';
-        command = vim.fn.stdpath("data") .. '/mason/packages/bash-debug-adapter/bash-debug-adapter';
-        name = 'bashdb';
+        type = 'executable',
+        command = vim.fn.stdpath("data") .. '/mason/packages/bash-debug-adapter/bash-debug-adapter',
+        name = 'bashdb',
       }
       dap.configurations.sh = {
         {
-          type = 'bashdb';
-          request = 'launch';
-          name = "Launch file";
-          showDebugOutput = true;
-          pathBashdb = vim.fn.stdpath("data") .. '/mason/packages/bash-debug-adapter/extension/bashdb_dir/bashdb';
-          pathBashdbLib = vim.fn.stdpath("data") .. '/mason/packages/bash-debug-adapter/extension/bashdb_dir';
-          trace = true;
-          file = "${file}";
-          program = "${file}";
-          cwd = '${workspaceFolder}';
-          pathCat = "cat";
-          pathBash = "/bin/bash";
-          pathMkfifo = "mkfifo";
-          pathPkill = "pkill";
-          args = {};
-          env = {};
-          terminalKind = "integrated";
+          type = 'bashdb',
+          request = 'launch',
+          name = "Launch file",
+          showDebugOutput = true,
+          pathBashdb = vim.fn.stdpath("data") .. '/mason/packages/bash-debug-adapter/extension/bashdb_dir/bashdb',
+          pathBashdbLib = vim.fn.stdpath("data") .. '/mason/packages/bash-debug-adapter/extension/bashdb_dir',
+          trace = true,
+          file = "${file}",
+          program = "${file}",
+          cwd = '${workspaceFolder}',
+          pathCat = "cat",
+          pathBash = "/bin/bash",
+          pathMkfifo = "mkfifo",
+          pathPkill = "pkill",
+          args = {},
+          env = {},
+          terminalKind = "integrated",
         }
       }
 
       -- Elixir
       dap.adapters.mix_task = {
         type = 'executable',
-        command = vim.fn.stdpath("data") .. '/mason/bin/elixir-ls-debugger';
+        command = vim.fn.stdpath("data") .. '/mason/bin/elixir-ls-debugger',
         args = {}
       }
       dap.configurations.elixir = {
@@ -689,7 +692,7 @@ return {
           type = "mix_task",
           name = "mix test",
           task = 'test',
-          taskArgs = {"--trace"},
+          taskArgs = { "--trace" },
           request = "launch",
           startApps = true, -- for Phoenix projects
           projectDir = "${workspaceFolder}",
@@ -699,7 +702,6 @@ return {
           }
         },
       }
-
     end, -- of dap config
     dependencies = {
       {
@@ -854,19 +856,241 @@ return {
         desc = "Auto generate C/C++ tags",
         callback = function()
           local is_c = vim.bo.filetype == "c" or vim.bo.filetype == "cpp"
-          if is_c then vim.g.gutentags_enabled = 1
-          else vim.g.gutentags_enabled = 0
+          if is_c then
+            vim.g.gutentags_enabled = 1
+          else
+            vim.g.gutentags_enabled = 0
           end
         end,
       })
     end,
   },
-
   {
     "lervag/vimtex",
+    lazy = false,
     init = function()
-      -- Use init for configuration, don't use the more common "config".
-    end
-  }
+      -- add which-key mapping descriptions for VimTex
+      vim.api.nvim_create_autocmd("FileType", {
+        desc = "Set up VimTex Which-Key descriptions",
+        group = vim.api.nvim_create_augroup("vimtex_mapping_descriptions", { clear = true }),
+        pattern = "tex",
+        callback = function(event)
+          local wk = require "which-key"
+          local opts = {
+            mode = "n",         -- NORMAL mode
+            buffer = event.buf, -- Specify a buffer number for buffer local mappings to show only in tex buffers
+          }
+          local mappings = {
+            ["<localleader>l"] = {
+              name = "+VimTeX",
+              a = "Show Context Menu",
+              C = "Full Clean",
+              c = "Clean",
+              e = "Show Errors",
+              G = "Show Status for All",
+              g = "Show Status",
+              i = "Show Info",
+              I = "Show Full Info",
+              k = "Stop VimTeX",
+              K = "Stop All VimTeX",
+              L = "Compile Selection",
+              l = "Compile",
+              m = "Show Imaps",
+              o = "Show Compiler Output",
+              q = "Show VimTeX Log",
+              s = "Toggle Main",
+              t = "Open Table of Contents",
+              T = "Toggle Table of Contents",
+              v = "View Compiled Document",
+              X = "Reload VimTeX State",
+              x = "Reload VimTeX",
+            },
+            ["ts"] = {
+              name = "VimTeX Toggles & Cycles", -- optional group name
+              ["$"] = "Cycle inline, display & numbered equation",
+              c = "Toggle star of command",
+              d = "Cycle (), \\left(\\right) [,...]",
+              D = "Reverse Cycle (), \\left(\\right) [, ...]",
+              e = "Toggle star of environment",
+              f = "Toggle a/b vs \\frac{a}{b}",
+            },
+            ["[/"] = "Previous start of a LaTeX comment",
+            ["[*"] = "Previous end of a LaTeX comment",
+            ["[["] = "Previous beginning of a section",
+            ["[]"] = "Previous end of a section",
+            ["[m"] = "Previous \\begin",
+            ["[M"] = "Previous \\end",
+            ["[n"] = "Previous start of a math zone",
+            ["[N"] = "Previous end of a math zone",
+            ["[r"] = "Previous \\begin{frame}",
+            ["[R"] = "Previous \\end{frame}",
+            ["]/"] = "Next start of a LaTeX comment %",
+            ["]*"] = "Next end of a LaTeX comment %",
+            ["]["] = "Next beginning of a section",
+            ["]]"] = "Next end of a section",
+            ["]m"] = "Next \\begin",
+            ["]M"] = "Next \\end",
+            ["]n"] = "Next start of a math zone",
+            ["]N"] = "Next end of a math zone",
+            ["]r"] = "Next \\begin{frame}",
+            ["]R"] = "Next \\end{frame}",
+            ["cs"] = {
+              c = "Change surrounding command",
+              e = "Change surrounding environment",
+              ["$"] = "Change surrounding math zone",
+              d = "Change surrounding delimiter",
+            },
+            ["ds"] = {
+              c = "Delete surrounding command",
+              e = "Delete surrounding environment",
+              ["$"] = "Delete surrounding math zone",
+              d = "Delete surrounding delimiter",
+            },
+          }
+          wk.register(mappings, opts)
+          -- VimTeX Text Objects without variants with targets.vim
+          opts = {
+            mode = "o", -- Operator pending mode
+            buffer = event.buf,
+          }
+          local objects = {
+            ["ic"] = [[LaTeX Command]],
+            ["ac"] = [[LaTeX Command]],
+            ["id"] = [[LaTeX Math Delimiter]],
+            ["ad"] = [[LaTeX Math Delimiter]],
+            ["ie"] = [[LaTeX Environment]],
+            ["ae"] = [[LaTeX Environment]],
+            ["i$"] = [[LaTeX Math Zone]],
+            ["a$"] = [[LaTeX Math Zone]],
+            ["iP"] = [[LaTeX Section, Paragraph, ...]],
+            ["aP"] = [[LaTeX Section, Paragraph, ...]],
+            ["im"] = [[LaTeX Item]],
+            ["am"] = [[LaTeX Item]],
+          }
+          wk.register(objects, opts)
+        end,
+      })
+    end,
+  },
+  -- RUST:
+  -- Add Rust & related to treesitter
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = function(_, opts)
+      opts.ensure_installed = opts.ensure_installed or {}
+      vim.list_extend(opts.ensure_installed, { "ron", "rust", "toml" })
+    end,
+  },
 
-}  -- end of return
+  -- Ensure Rust debugger is installed
+  {
+    "williamboman/mason.nvim",
+    optional = true,
+    opts = function(_, opts)
+      opts.ensure_installed = opts.ensure_installed or {}
+      vim.list_extend(opts.ensure_installed, { "codelldb" })
+    end,
+  },
+
+  {
+    "mrcjkb/rustaceanvim",
+    version = '^4', -- Recommended
+    ft = { "rust" },
+    opts = {
+      server = {
+        on_attach = function(client, bufnr)
+          local nmap = function(keys, func, desc)
+            if desc then
+              desc = 'LSP: ' .. desc
+            end
+
+            vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+          end
+
+          nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+          nmap('<leader>ca', function()
+            vim.lsp.buf.code_action { context = { only = { 'quickfix', 'refactor', 'source' } } }
+          end, '[C]ode [A]ction')
+
+          nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+          nmap('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+          nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+          nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+
+          -- See `:help K` for why this keymap
+          nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
+          nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+
+          -- Lesser used LSP functionality
+          nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+          nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
+          nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
+          nmap('<leader>wl', function()
+            print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+          end, '[W]orkspace [L]ist Folders')
+
+          -- Create a command `:Format` local to the LSP buffer
+          vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
+            vim.lsp.buf.format()
+          end, { desc = 'Format current buffer with LSP' })
+        end,
+        default_settings = {
+          -- rust-analyzer language server configuration
+          ["rust-analyzer"] = {
+            cargo = {
+              allFeatures = true,
+              loadOutDirsFromCheck = true,
+              runBuildScripts = true,
+            },
+            -- Add clippy lints for Rust.
+            checkOnSave = {
+              allFeatures = true,
+              command = "clippy",
+              extraArgs = { "--no-deps" },
+            },
+            procMacro = {
+              enable = true,
+              ignored = {
+                ["async-trait"] = { "async_trait" },
+                ["napi-derive"] = { "napi" },
+                ["async-recursion"] = { "async_recursion" },
+              },
+            },
+          },
+        },
+      }
+    },
+    config = function(_, opts)
+      vim.g.rustaceanvim = vim.tbl_deep_extend("force",
+        {},
+        opts or {})
+    end
+  },
+
+
+  {
+    "nvim-neotest/neotest",
+    optional = true,
+    opts = function(_, opts)
+      opts.adapters = opts.adapters or {}
+      vim.list_extend(opts.adapters, {
+        require('rustaceanvim.neotest'),
+      })
+    end
+  },
+  {
+    'saecki/crates.nvim',
+    tag = 'stable',
+    event = { "BufRead Cargo.toml" },
+    config = function()
+      require('crates').setup {
+        null_ls = {
+          enabled = true,
+          name = "crates.nvim",
+        },
+      }
+    end,
+  },
+} -- end of return

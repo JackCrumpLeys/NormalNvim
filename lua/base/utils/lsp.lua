@@ -104,7 +104,6 @@ M.apply_default_lsp_settings = function()
     -- check if client is fully disabled or filtered by function
     return not (vim.tbl_contains(disabled, client.name) or (type(filter) == "function" and not filter(client)))
   end
-
 end
 
 --- This function has the sole purpose of passing the lsp keymappings to lsp.
@@ -156,6 +155,16 @@ function M.apply_user_lsp_settings(server_name)
   if server_name == "lua_ls" then -- Disable third party checking
     pcall(require, "neodev")
     opts.settings = { Lua = { workspace = { checkThirdParty = false } } }
+  end
+  if server_name == 'ltex' then -- use ngram
+    opts.settings = {
+      ltex = {
+        additionalRules = {
+          languageModel = '~/grammar/',
+        },
+      }
+    }
+    print(vim.inspect(opts.settings))
   end
 
   -- Apply them
