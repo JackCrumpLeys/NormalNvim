@@ -642,8 +642,13 @@ return {
           type = 'kotlin',
           request = 'launch',
           name = 'Launch kotlin program',
+<<<<<<< HEAD
           projectRoot = "${workspaceFolder}/app",     -- ensure this is correct
           mainClass = "AppKt",                        -- ensure this is correct
+=======
+          projectRoot = "${workspaceFolder}/app", -- ensure this is correct
+          mainClass = "AppKt",                    -- ensure this is correct
+>>>>>>> NormalNvim-main
         },
       }
 
@@ -923,17 +928,28 @@ return {
         desc = "Auto generate C/C++ tags",
         callback = function()
           local is_c = vim.bo.filetype == "c" or vim.bo.filetype == "cpp"
+<<<<<<< HEAD
           if is_c then vim.g.gutentags_enabled = 1
           else vim.g.gutentags_enabled = 0 end
+=======
+          if is_c then
+            vim.g.gutentags_enabled = 1
+          else
+            vim.g.gutentags_enabled = 0
+          end
+>>>>>>> NormalNvim-main
         end,
       })
     end,
   },
   {
+<<<<<<< HEAD
   }
     end
       -- Use init for configuration, don't use the more common "config".
     init = function()
+=======
+>>>>>>> NormalNvim-main
     "lervag/vimtex",
     lazy = false,
     init = function()
