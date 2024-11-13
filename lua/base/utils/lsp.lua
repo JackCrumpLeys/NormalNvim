@@ -149,6 +149,12 @@ function M.apply_user_lsp_settings(server_name)
       opts.settings = { json = { schemas = schemastore.json.schemas(), validate = { enable = true } } }
     end
   end
+  if server_name == "tinymist" then
+    opts.root_dir = function()
+      return vim.fn.getcwd()
+    end
+    opts.single_file_support = true
+  end
   if server_name == "yamlls" then -- Add schemastore schemas
     local is_schemastore_loaded, schemastore = pcall(require, "schemastore")
     if is_schemastore_loaded then opts.settings = { yaml = { schemas = schemastore.yaml.schemas() } } end

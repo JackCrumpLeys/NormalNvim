@@ -36,6 +36,7 @@
 --       -> ask chatgpt                        [neural]
 --       -> hop.nvim
 --       -> mason-lspconfig.nvim               [lsp]
+--       -> img-paste.nvim
 
 --
 --   KEYBINDINGS REFERENCE
@@ -1179,6 +1180,10 @@ if is_available "nvim-dap" then
     }
   end
 end
+
+-- paste images
+vim.g.PasteImageFunction = 'g:LatexPasteImage'
+vim.keymap.set('n', '<leader>pp', ':call mdip#MarkdownClipboardImage() <CR>')
 
 -- testing [tests] -------------------------------------------------
 -- neotest

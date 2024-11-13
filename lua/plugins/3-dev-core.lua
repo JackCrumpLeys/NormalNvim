@@ -176,47 +176,45 @@ return {
   -- nvim-java [java support]
   -- https://github.com/nvim-java/nvim-java
   -- Reliable jdtls support. Must go before mason-lspconfig and lsp-config.
-  {
-    "nvim-java/nvim-java",
-    ft = { "java" },
-    dependencies = {
-      "nvim-java/lua-async-await",
-      'nvim-java/nvim-java-refactor',
-      "nvim-java/nvim-java-core",
-      "nvim-java/nvim-java-test",
-      "nvim-java/nvim-java-dap",
-      "MunifTanjim/nui.nvim",
-      "neovim/nvim-lspconfig",
-      "mfussenegger/nvim-dap",
-      "williamboman/mason.nvim",
-    },
-    opts = {
-      notifications = {
-        dap = false,
-      },
-      -- NOTE: One of these files must be in your project root directory.
-      --       Otherwise the debugger will end in the wrong directory and fail.
-      root_markers = {
-        'settings.gradle',
-        'settings.gradle.kts',
-        'pom.xml',
-        'build.gradle',
-        'mvnw',
-        'gradlew',
-        'build.gradle',
-        'build.gradle.kts',
-        '.git',
-      },
-    },
-  },
+  -- {
+  --   "nvim-java/nvim-java",
+  --   ft = { "java" },
+  --   dependencies = {
+  --     "nvim-java/lua-async-await",
+  --     'nvim-java/nvim-java-refactor',
+  --     "nvim-java/nvim-java-core",
+  --     "nvim-java/nvim-java-test",
+  --     "nvim-java/nvim-java-dap",
+  --     "MunifTanjim/nui.nvim",
+  --     "neovim/nvim-lspconfig",
+  --     "mfussenegger/nvim-dap",
+  --     "williamboman/mason.nvim",
+  --   },
+  --   opts = {
+  --     notifications = {
+  --       dap = false,
+  --     },
+  --     -- NOTE: One of these files must be in your project root directory.
+  --     --       Otherwise the debugger will end in the wrong directory and fail.
+  --     root_markers = {
+  --       'settings.gradle',
+  --       'settings.gradle.kts',
+  --       'pom.xml',
+  --       'build.gradle',
+  --       'mvnw',
+  --       'gradlew',
+  --       'build.gradle',
+  --       'build.gradle.kts',
+  --       '.git',
+  --     },
+  --   },
+  -- },
 
   --  nvim-lspconfig [lsp configs]
   --  https://github.com/neovim/nvim-lspconfig
   --  This plugin provide default configs for the lsp servers available on mason.
   {
     "neovim/nvim-lspconfig",
-    dependencies = {
-    },
     event = "User BaseFile",
     dependencies = "nvim-java/nvim-java",
   },
